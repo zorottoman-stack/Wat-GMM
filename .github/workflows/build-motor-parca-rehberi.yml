@@ -22,6 +22,8 @@ jobs:
 
       - name: Android SDK kur
         uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
 
       - name: Android SDK paketlerini kur
         run: |
