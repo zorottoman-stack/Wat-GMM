@@ -31,28 +31,32 @@ jobs:
             "platforms;android-35" \
             "build-tools;35.0.0"
 
+      - name: Gradle kur
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
+
       - name: Kaynak ZIP dosyasini ac
         run: |
           unzip -q MOTOR_PARCA_REHBERI_SOURCE.zip -d source
 
-      - name: Gradle ile APK oluştur
+      - name: APK oluştur
         run: |
-          PROJECT_DIR="$(dirname "$(find "$GITHUB_WORKSPACE/source" -type f -name gradlew -print -quit)")"
+          PROJECT_DIR="$(dirname "$(find "$GITHUB_WORKSPACE/source" -type f -name settings.gradle.kts -print -quit)")"
 
           if [ -z "$PROJECT_DIR" ]; then
-            echo "HATA: ZIP icinde gradlew bulunamadi."
-            echo "ZIP icerigi:"
+            echo "HATA: Android proje klasoru bulunamadi."
             find "$GITHUB_WORKSPACE/source" -maxdepth 4 -type f | sort
             exit 1
           fi
 
           echo "Android proje klasoru: $PROJECT_DIR"
+
           cd "$PROJECT_DIR"
 
-          chmod +x gradlew
-          ./gradlew assembleDebug --stacktrace
+          gradle assembleDebug --stacktrace
 
-      - name: APK yukle
+      - name: APK yükle
         uses: actions/upload-artifact@v4
         with:
           name: Motor-Parca-Rehberi-debug
